@@ -10,7 +10,9 @@ Currently, this process requires manual data aggregation and cross-referencing b
 The primary objective is to generate a comprehensive Monthly Financial Standing Report by the 1st of every month. This report must provide leadership with a clear, data-driven snapshot of NovaCart’s performance relative to the broader market, enabling them to make faster and more informed strategic decisions.
 
 # Solution
-Build a RAG Workflow with an AI Finance Reporting Agent that is capable of autonomous data synthesis and insight generation. 
+We will be using the n8n platform for building the workflow ; Pinecone for Vector db ; Cohere for re ranking and Open AI LLM models.
+
+This RAG Workflow should have an AI Finance Reporting Agent that is capable of autonomous data synthesis and insight generation. 
 
 The agent will:
 ● Query internal data: Access and analyze real-time product sales numbers stored in a Vector Database created as part of the **internal data Ingestion Pipeline**.
@@ -20,7 +22,12 @@ The agent will:
 ● Synthesize & Report: Correlate internal performance with external market conditions to produce a structured summary for leadership and Report over Email: Send the final monthly report over email to the required stakeholder. As part of the **Retrieval Pipeline.**
 
 # System Design
+assets/RAG_FinReport.png
 
 # Scaling_Strategy
+docs/Scaling_Strategy.md
+
+# Setup Instructions
+docs/Setup_Instructions.md
 
 # Demo 
