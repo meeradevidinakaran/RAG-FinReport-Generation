@@ -1,0 +1,233 @@
+{
+  "name": "Novafinreport External Ingestion",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -80
+      ],
+      "id": "52370507-59bf-4ba6-a05e-a61c4d08d3fa",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "resource": "fileFolder",
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1F52RBUly1JLyt96wjV345KZdXrGjligI",
+            "mode": "list",
+            "cachedResultName": "External Resources",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1F52RBUly1JLyt96wjV345KZdXrGjligI"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -176,
+        -80
+      ],
+      "id": "d8ddf57a-8f4c-4ae5-9aeb-31d649d51da7",
+      "name": "Search files and folders",
+      "credentials": {
+        "googleApi": {
+          "id": "uAQWFyJ7SCIuOmVy",
+          "name": "Google Drive account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{$json.id}}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        32,
+        -80
+      ],
+      "id": "31d8e768-b9ee-47bb-bb0d-4b4dcd049eab",
+      "name": "Download file",
+      "credentials": {
+        "googleApi": {
+          "id": "uAQWFyJ7SCIuOmVy",
+          "name": "Google Drive account 5"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "finrepexternal",
+          "mode": "list",
+          "cachedResultName": "finrepexternal"
+        },
+        "options": {
+          "pineconeNamespace": "Finrepext"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        320,
+        -80
+      ],
+      "id": "652b23b9-5f14-4271-a0cd-315aa6de0015",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "YSZoa0raJag3OEyM",
+          "name": "Pinecone account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "text-embedding-3-large",
+        "options": {
+          "dimensions": 1024
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        80
+      ],
+      "id": "f962ab4d-671a-4105-b67b-aa96060d7495",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "o2i0UEEQ8m4YpYSP",
+          "name": "OpenAI account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        80
+      ],
+      "id": "0979f788-1a76-4827-a3e0-b851d5989de2",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkSize": 500,
+        "chunkOverlap": 50,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        720,
+        176
+      ],
+      "id": "f4ea80ae-9403-428b-afb2-57236d91fa4e",
+      "name": "Recursive Character Text Splitter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Search files and folders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search files and folders": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "2b9cfb53-27d5-4da8-927a-f8989c7c82db",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bba76e5e166a4f7645277641896085af1c1b10d058677e234de9d24b7db7752c"
+  },
+  "id": "g8xpg6HYMrarAy8b",
+  "tags": []
+}
