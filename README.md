@@ -30,4 +30,9 @@ docs/Scaling_Strategy.md
 # Setup Instructions
 docs/Setup_Instructions.md
 
-# Demo 
+# n8n Retrieval Workflow
+<img width="1920" height="1020" alt="image" src="https://github.com/user-attachments/assets/baa57186-5869-4c43-876b-ec656452313c" />
+
+# Report snapshot 
+<img width="1892" height="860" alt="image" src="https://github.com/user-attachments/assets/26787cf8-f65c-4719-a1fb-4acf715f4a17" />
+
